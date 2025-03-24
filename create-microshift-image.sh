@@ -22,10 +22,12 @@ case "$ARCH" in
 esac
 
 # Variables
-VERSION_TAG="4.18.0-okd-scos.4"
+# Get the version from https://amd64.origin.releases.ci.openshift.org/
+OKD_VERSION=${OKD_VERSION:-4.18.0-okd-scos.4}
 IMAGE_NAME="quay.io/minc-org/minc"
-IMAGE_ARCH_TAG="${IMAGE_NAME}:${VERSION_TAG}-${ARCH}"
+IMAGE_ARCH_TAG="${IMAGE_NAME}:${OKD_VERSION}-${ARCH}"
 CONTAINERFILE="okd/src/microshift-okd-multi-build.Containerfile"
+
 
 # check if image already exist
 if skopeo --override-os="linux" --override-arch="${ARCH}" inspect --format "Digest: {{.Digest}}" docker://${IMAGE_ARCH_TAG}; then
@@ -45,7 +47,7 @@ sed -i '$a COPY storage.conf /etc/containers/storage.conf\nCOPY 00-dns.yaml /etc
 # Build the image
 sudo podman build \
   --build-arg OKD_REPO="$REPO" \
-  --build-arg OKD_VERSION_TAG="$VERSION_TAG" \
+  --build-arg OKD_VERSION_TAG="$OKD_VERSION" \
   --env WITH_FLANNEL=1 \
   --env EMBED_CONTAINER_IMAGES=1 \
   --file "$CONTAINERFILE" \
