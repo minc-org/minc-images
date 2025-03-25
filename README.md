@@ -1,5 +1,9 @@
-Microshift in Podman (minp)
-==========================
+Images for Microshift in Container (minc)
+=========================================
+
+This repository is only to create microshift components image using OKD content. you can try this image manually using
+below steps or better to use [minc](https://github.com/minc-org/minc) project.
+
 
 Make sure you are using rootful mode instead of rootless for this. (Default is `podman-machine-default-root`)
 ```
