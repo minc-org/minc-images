@@ -42,7 +42,10 @@ pushd microshift
 
 echo "Embed storage.conf and dns.conf to $CONTAINERFILE"
 cp ../storage.conf ../00-dns.yaml .
+sed -i '/^FROM quay.io\/centos-bootc\/centos-bootc:stream9[[:space:]]*$/s|FROM quay.io/centos-bootc/centos-bootc:stream9|FROM quay.io/centos/centos:stream9|' $CONTAINERFILE
+sed -i 's|centos-release-nfv-openvswitch|centos-release-nfv-openvswitch hostname|' $CONTAINERFILE
 sed -i '$a COPY storage.conf /etc/containers/storage.conf\nCOPY 00-dns.yaml /etc/microshift/config.d/00-dns.yaml' $CONTAINERFILE
+sed -i '$a STOPSIGNAL SIGRTMIN+3\nCMD ["/sbin/init"]' $CONTAINERFILE
 
 # Build the image
 sudo podman build \
