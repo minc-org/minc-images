@@ -53,9 +53,11 @@ jobs:
         password: ${{ env.PASSWORD }}
         registry: "quay.io"
     - name: build microshift image and push
-      id: image
-      run: |
-        ./create-microshift-image.sh
+      uses: nick-fields/retry@v3
+      with:
+        timeout_minutes: 45
+        max_attempts: 3
+        command: ./create-microshift-image.sh
     - name: Setup tmate session
       if: ${{ failure() && steps.image.conclusion == 'failure' }}
       uses: mxschmitt/action-tmate@v3
