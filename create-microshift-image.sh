@@ -2,6 +2,16 @@
 
 set -exuo pipefail
 
+
+# Function to remove the directory on exit
+cleanup() {
+    echo "Cleaning up: microshift"
+    rm -rf microshift
+}
+
+# Trap EXIT and INT signals to ensure cleanup
+trap cleanup EXIT INT
+
 # Detect the system architecture
 ARCH=$(uname -m)
 
@@ -61,5 +71,3 @@ sudo podman build \
 echo "Pushing image: $IMAGE_ARCH_TAG"
 sudo podman push "$IMAGE_ARCH_TAG"
 popd
-
-rm -fr microshift
