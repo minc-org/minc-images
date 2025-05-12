@@ -21,7 +21,12 @@ jobs:
       run: |
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /usr/share/swift
           sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/.ghcup
+          sudo rm -rf /usr/local/graalvm/
+          sudo rm -rf /usr/local/share/powershell
+          sudo rm -rf /usr/local/lib/node_modules
           sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf /opt/hostedtoolcache/CodeQL
 
@@ -29,6 +34,17 @@ jobs:
 
           sudo swapoff -a
           sudo rm -f /mnt/swapfile
+
+          APT_PARAMS='sudo apt -y -qq -o=Dpkg::Use-Pty=0'
+          $APT_PARAMS remove -y '^dotnet-.*'
+          $APT_PARAMS remove -y '^llvm-.*'
+          $APT_PARAMS remove -y '^php.*'
+          $APT_PARAMS remove -y '^mongodb-.*'
+          $APT_PARAMS remove -y '^mysql-.*'
+          $APT_PARAMS remove -y azure-cli google-* google-chrome-stable firefox powershell mono-devel libgl1-mesa-dri
+          $APT_PARAMS autoremove --purge -y
+          $APT_PARAMS autoclean
+          $APT_PARAMS clean
 
     - name: Verify installations
       run: |
