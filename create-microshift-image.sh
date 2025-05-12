@@ -36,7 +36,7 @@ esac
 OKD_VERSION=${OKD_VERSION:-4.18.0-okd-scos.9}
 IMAGE_NAME="quay.io/minc-org/minc"
 IMAGE_ARCH_TAG="${IMAGE_NAME}:${OKD_VERSION}-${ARCH}"
-CONTAINERFILE="okd/src/microshift-okd-multi-build.Containerfile"
+CONTAINERFILE="microshift-okd-multi-build.Containerfile"
 
 
 # check if image already exist
@@ -47,7 +47,7 @@ fi
 
 echo "Building image for architecture: $ARCH using repository: $REPO"
 
-git clone https://github.com/openshift/microshift
+git clone https://github.com/microshift-io/microshift
 pushd microshift
 
 echo "Embed storage.conf and dns.conf to $CONTAINERFILE"
