@@ -33,7 +33,7 @@ esac
 
 # Variables
 # Get the version from https://amd64.origin.releases.ci.openshift.org/
-OKD_VERSION=${OKD_VERSION:-4.18.0-okd-scos.9}
+OKD_VERSION=${OKD_VERSION:-4.19.0-okd-scos.3}
 IMAGE_NAME="quay.io/minc-org/minc"
 IMAGE_ARCH_TAG="${IMAGE_NAME}:${OKD_VERSION}-${ARCH}"
 CONTAINERFILE="microshift-okd-multi-build.Containerfile"
