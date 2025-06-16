@@ -8,7 +8,7 @@ export LANG=C.UTF-8
 OC=${OC:-oc}
 SKOPEO=${SKOPEO:-skopeo}
 PODMAN=${PODMAN:-podman}
-BRANCH=${BRANCH:-release-4.18}
+BRANCH=${BRANCH:-release-4.19}
 # Get the version from https://amd64.origin.releases.ci.openshift.org/
 OKD_VERSION=${OKD_VERSION:-4.19.0-okd-scos.3}
 
