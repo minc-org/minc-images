@@ -124,7 +124,6 @@ coredns_image() {
 csi_external_snapshotter_image() {
   local repo_url="https://github.com/openshift/csi-external-snapshotter"
   local dockerfile_snapshot_controller_path="Dockerfile.snapshot-controller.openshift.rhel7"
-  local dockerfile_webhook_path="Dockerfile.webhook.openshift.rhel7"
   local repo=$(basename ${repo_url})
 
   git clone --branch "$BRANCH" --single-branch "$repo_url"
@@ -136,12 +135,6 @@ csi_external_snapshotter_image() {
   
   podman build --platform linux/arm64 -t "${images[csi-snapshot-controller]}" -f "$dockerfile_snapshot_controller_path" .
   podman push "${images[csi-snapshot-controller]}"
-  
-  sed -i 's|^FROM registry.ci.openshift.org/ocp/builder.*|FROM registry.ci.openshift.org/openshift/release:rhel-9-release-golang-1.23-openshift-4.19 AS builder|' "$dockerfile_webhook_path"
-  sed -i "s|^FROM registry.ci.openshift.org/ocp/.*:base-rhel9|FROM quay.io/okd-arm/scos-${OKD_VERSION}:base-stream9|" "$dockerfile_webhook_path"
-
-  podman build --platform linux/arm64 -t "${images[csi-snapshot-validation-webhook]}" -f "$dockerfile_webhook_path" .
-  podman push "${images[csi-snapshot-validation-webhook]}"
 
   cd ..
   rm -fr $repo
@@ -244,7 +237,6 @@ create_new_okd_release() {
 	kube-proxy="${images[kube-proxy]}" \
 	coredns="${images[coredns]}" \
        csi-snapshot-controller="${images[csi-snapshot-controller]}" \
-       csi-snapshot-validation-webhook="${images[csi-snapshot-validation-webhook]}" \
 	kube-rbac-proxy="${images[kube-rbac-proxy]}" \
 	pod="${images[pod]}" \
 	service-ca-operator="${images[service-ca-operator]}" \
@@ -276,7 +268,6 @@ images=(
     [kube-proxy]="quay.io/okd-arm/kube-proxy:${OKD_VERSION}"
     [coredns]="quay.io/okd-arm/coredns:${OKD_VERSION}"
     [csi-snapshot-controller]="quay.io/okd-arm/csi-snapshot-controller:${OKD_VERSION}"
-    [csi-snapshot-validation-webhook]="quay.io/okd-arm/csi-snapshot-validation-webhook:${OKD_VERSION}"
     [kube-rbac-proxy]="quay.io/okd-arm/kube-rbac-proxy:${OKD_VERSION}"
     [pod]="quay.io/okd-arm/pod:${OKD_VERSION}"
     [service-ca-operator]="quay.io/okd-arm/service-ca-operator:${OKD_VERSION}"
