@@ -37,6 +37,7 @@ OKD_VERSION=${OKD_VERSION:-4.19.0-okd-scos.3}
 IMAGE_NAME="quay.io/minc-org/minc"
 IMAGE_ARCH_TAG="${IMAGE_NAME}:${OKD_VERSION}-${ARCH}"
 CONTAINERFILE="microshift-okd-multi-build.Containerfile"
+RELEASE_BRANCH="release-4.19"
 
 
 # check if image already exist
@@ -59,6 +60,7 @@ sed -i '$a STOPSIGNAL SIGRTMIN+3\nCMD ["/sbin/init"]' $CONTAINERFILE
 # Build the image
 sudo podman build \
   --build-arg OKD_REPO="$REPO" \
+  --build-arg USHIFT_BRANCH="$RELEASE_BRANCH" \
   --build-arg OKD_VERSION_TAG="$OKD_VERSION" \
   --env WITH_FLANNEL=1 \
   --env EMBED_CONTAINER_IMAGES=1 \
