@@ -62,7 +62,7 @@ sudo podman build \
   --build-arg OKD_REPO="$REPO" \
   --build-arg USHIFT_BRANCH="$RELEASE_BRANCH" \
   --build-arg OKD_VERSION_TAG="$OKD_VERSION" \
-  --env WITH_FLANNEL=1 \
+  --env WITH_KINDNET=1 \
   --env EMBED_CONTAINER_IMAGES=1 \
   --file "$CONTAINERFILE" \
   --tag "$IMAGE_ARCH_TAG" \
