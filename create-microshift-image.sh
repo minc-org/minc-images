@@ -54,6 +54,10 @@ pushd microshift
 echo "Embed storage.conf and dns.conf to $CONTAINERFILE"
 cp ../storage.conf ../00-dns.yaml .
 sed -i '/^FROM quay.io\/centos-bootc\/centos-bootc:stream9[[:space:]]*$/s|FROM quay.io/centos-bootc/centos-bootc:stream9|FROM quay.io/centos/centos:stream9|' $CONTAINERFILE
+sed -i '/^WORKDIR \/microshift$/a RUN git fetch origin main && \\\
+   git config --global user.email "prkumar@redhat.com" && \\\
+   git config --global user.name "prkumar" && \\\
+   git cherry-pick 1c7017358ca6b06820e2f6f901d317a80d3677f4' $CONTAINERFILE
 sed -i '$a COPY storage.conf /etc/containers/storage.conf\nCOPY 00-dns.yaml /etc/microshift/config.d/00-dns.yaml' $CONTAINERFILE
 sed -i '$a STOPSIGNAL SIGRTMIN+3\nCMD ["/sbin/init"]' $CONTAINERFILE
 
