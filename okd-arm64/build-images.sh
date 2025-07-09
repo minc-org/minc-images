@@ -43,7 +43,7 @@ base_image() {
   # Replace lines that begin with 'FROM registry.ci.openshift.org/ocp'
   sed -i 's|^FROM registry.ci.openshift.org/ocp/.*|FROM quay.io/centos/centos:stream9|' "$dockerfile_path"
 
-  podman build --platform linux/arm64 -t "${images[base]}" -f "$dockerfile_path" .
+  podman build --pull=always --platform linux/arm64 -t "${images[base]}" -f "$dockerfile_path" .
   podman push "${images[base]}"
 
   cd ..
