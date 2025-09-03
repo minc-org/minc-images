@@ -64,6 +64,7 @@ sudo podman build \
   --build-arg OKD_VERSION_TAG="$OKD_VERSION" \
   --env WITH_KINDNET=1 \
   --env EMBED_CONTAINER_IMAGES=1 \
+  --env WITH_OLM=1 \
   --file "$CONTAINERFILE" \
   --tag "$IMAGE_ARCH_TAG" \
   .
