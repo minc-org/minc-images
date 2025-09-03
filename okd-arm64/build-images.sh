@@ -220,6 +220,46 @@ service_ca_operator_image() {
   rm -fr $repo
 }
 
+# Function to handle operator-lifecycle-manager-image repository
+operator_lifecycle_manager_image() {
+  local repo_url="https://github.com/openshift/operator-framework-olm"
+  local dockerfile_path="operator-lifecycle-manager.Dockerfile"
+  local repo=$(basename ${repo_url})
+
+  git clone --branch "$BRANCH" --single-branch "$repo_url"
+  cd $repo || { echo "Failed to access repo directory"; return 1; }
+
+  # Apply the sed commands for the operator-lifecycle-manager Dockerfile
+  sed -i 's|^FROM registry.ci.openshift.org/ocp/builder.*|FROM registry.ci.openshift.org/openshift/release:rhel-9-release-golang-1.23-openshift-4.19 AS builder|' "$dockerfile_path"
+  sed -i "s|^FROM registry.ci.openshift.org/ocp/.*:base-rhel9|FROM quay.io/okd-arm/scos-${OKD_VERSION}:base-stream9|" "$dockerfile_path"
+
+  podman build --platform linux/arm64 -t "${images[operator-lifecycle-manager]}" -f "$dockerfile_path" .
+  podman push "${images[operator-lifecycle-manager]}"
+
+  cd ..
+  rm -fr $repo
+}
+
+# Function to handle operator-registry-image repository
+operator_registry_image() {
+  local repo_url="https://github.com/openshift/operator-framework-olm"
+  local dockerfile_path="operator-registry.Dockerfile"
+  local repo=$(basename ${repo_url})
+
+  git clone --branch "$BRANCH" --single-branch "$repo_url"
+  cd $repo || { echo "Failed to access repo directory"; return 1; }
+
+  # Apply the sed commands for the operator-registry Dockerfile
+  sed -i 's|^FROM registry.ci.openshift.org/ocp/builder.*|FROM registry.ci.openshift.org/openshift/release:rhel-9-release-golang-1.23-openshift-4.19 AS builder|' "$dockerfile_path"
+  sed -i "s|^FROM registry.ci.openshift.org/ocp/.*:base-rhel9|FROM quay.io/okd-arm/scos-${OKD_VERSION}:base-stream9|" "$dockerfile_path"
+
+  podman build --platform linux/arm64 -t "${images[operator-registry]}" -f "$dockerfile_path" .
+  podman push "${images[operator-registry]}"
+
+  cd ..
+  rm -fr $repo
+}
+
 # Use image sha256 instead tags
 update_image_tag_to_sha() {
     for key in "${!images[@]}"; do
@@ -240,6 +280,8 @@ create_new_okd_release() {
 	kube-rbac-proxy="${images[kube-rbac-proxy]}" \
 	pod="${images[pod]}" \
 	service-ca-operator="${images[service-ca-operator]}" \
+	operator-lifecycle-manager="${images[operator-lifecycle-manager]}" \
+	operator-registry="${images[operator-registry]}" \
 	--to-image quay.io/okd-arm/okd-arm-release:${OKD_VERSION}
 }
 
@@ -254,6 +296,8 @@ update_images() {
   pod_image
   cli_image
   service_ca_operator_image
+  operator_lifecycle_manager_image
+  operator_registry_image
 }
 
 # Declare an associative array
@@ -271,6 +315,8 @@ images=(
     [kube-rbac-proxy]="quay.io/okd-arm/kube-rbac-proxy:${OKD_VERSION}"
     [pod]="quay.io/okd-arm/pod:${OKD_VERSION}"
     [service-ca-operator]="quay.io/okd-arm/service-ca-operator:${OKD_VERSION}"
+    [operator-lifecycle-manager]="quay.io/okd-arm/operator-lifecycle-manager:${OKD_VERSION}"
+    [operator-registry]="quay.io/okd-arm/operator-registry:${OKD_VERSION}"
 )
 
 # check the install process
