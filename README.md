@@ -1,9 +1,12 @@
 Images for Microshift in Container (minc)
 =========================================
 
-This repository is only to create microshift components image using OKD content. you can try this image manually using
-below steps or better to use [minc](https://github.com/minc-org/minc) project.
+This repository builds microshift container images using OKD content. You can try this image manually using
+the steps below or better to use the [minc](https://github.com/minc-org/minc) project.
 
+The image is built using the upstream [microshift-io/microshift](https://github.com/microshift-io/microshift)
+Makefile pipeline (`make rpm && make image`), with minc-specific patches applied to run as a regular container
+(non-bootc). ARM64 OKD payload is provided by the upstream nightly builds at `ghcr.io/microshift-io/okd`.
 
 Make sure you are using rootful mode instead of rootless for this. (Default is `podman-machine-default-root`)
 ```
@@ -19,10 +22,6 @@ In windows on wsl environment make sure you have cgroupsv2 enabled which is not 
  - https://github.com/spurin/wsl-cgroupsv2
  - https://github.com/microsoft/WSL/issues/6662 (more details around cgroups-v1/v2)
 
-Image is created using https://github.com/openshift/microshift/tree/main/okd/src#build-and-run-microshift-upstream-without-subscriptionpull-secret
-
-NOTE: arm64 image is created using hacky way because OKD doesn't provide arm64 payload as of now.
-
 Get the openshift client binary:
 ------------------------------
 - Windows: https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/latest/openshift-client-windows.zip
@@ -34,7 +33,7 @@ Running the image:
 
 For Windows:
 ```
-podman run --hostname 127.0.0.1.nip.io --detach --rm -it --privileged -v /var/lib/containers/storage:/host-container:ro,rshared -p 9080:80 -p 9443:443 -p 6443:6443 --name microshift quay.io/praveenkumar/microshift-okd:4.18.0-okd-scos.1-amd64
+podman run --hostname 127.0.0.1.nip.io --detach --rm -it --privileged -v /var/lib/containers/storage:/host-container:ro,rshared -p 9080:80 -p 9443:443 -p 6443:6443 --name microshift quay.io/minc-org/minc:4.19.0-okd-scos.17-amd64
 sleep 20
 podman cp microshift:/var/lib/microshift/resources/kubeadmin/127.0.0.1.nip.io/kubeconfig .
 oc.exe --kubeconfig=kubeconfig get pods -A
@@ -42,7 +41,7 @@ oc.exe --kubeconfig=kubeconfig get pods -A
 
 For Mac:
 ```
-podman run --hostname 127.0.0.1.nip.io --detach --rm -it --privileged -v /var/lib/containers/storage:/host-container:ro,rshared -p 9080:80 -p 9443:443 -p 6443:6443 --name microshift quay.io/praveenkumar/microshift-okd:4.18.0-okd-scos.1-arm64
+podman run --hostname 127.0.0.1.nip.io --detach --rm -it --privileged -v /var/lib/containers/storage:/host-container:ro,rshared -p 9080:80 -p 9443:443 -p 6443:6443 --name microshift quay.io/minc-org/minc:4.19.0-okd-scos.17-arm64
 sleep 20
 podman cp microshift:/var/lib/microshift/resources/kubeadmin/127.0.0.1.nip.io/kubeconfig .
 oc --kubeconfig=kubeconfig get pods -A
@@ -64,4 +63,3 @@ Access the application on host:
 $ curl http://myserver-demo.apps.127.0.0.1.nip.io:9080
 hello
 ```
-
